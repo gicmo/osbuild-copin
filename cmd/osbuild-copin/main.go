@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"os"
 
 	"github.com/containers/image/v5/image"
 	"github.com/containers/image/v5/manifest"
@@ -14,6 +15,14 @@ import (
 var defaultUserAgent = "osbuild-depsolve/1.0"
 
 func main() {
+
+	if len(os.Args) < 2 {
+		fmt.Printf("usage: %s DOCKER-REFERENCE\n", os.Args[0])
+		os.Exit(1)
+	}
+
+	dockerRef := fmt.Sprintf("docker://%s", os.Args[1])
+
 	ctx := context.Background()
 
 	sys := &types.SystemContext{
@@ -26,7 +35,7 @@ func main() {
 		DockerRegistryUserAgent:  defaultUserAgent,
 	}
 
-	ref, err := alltransports.ParseImageName("docker://registry.fedoraproject.org/fedora:latest")
+	ref, err := alltransports.ParseImageName(dockerRef)
 	if err != nil {
 		panic(err)
 	}
